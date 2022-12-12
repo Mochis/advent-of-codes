@@ -1,0 +1,15 @@
+# Ignore everything:
+*
+
+# But not these files...
+!.gitignore
+
+# ...even if they are in subdirectories
+!*/
+!*.md
+!*.rs
+!*.hs
+!*.go
+!*.scala
+!input*
+
