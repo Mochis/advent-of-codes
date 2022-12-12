@@ -4,7 +4,7 @@ main = do
     input <- readFile "../input"
     let elvesCals = lines input
     let maxCals = bestElf elvesCals 0 0
-    putStrLn $ "The max is: " ++ (show maxCals) 
+    putStrLn $ "The max is: " ++ show maxCals 
 
 -- Recursivelly accumulates partial calories and the best work
 bestElf :: [String] -> Int -> Int -> Int
