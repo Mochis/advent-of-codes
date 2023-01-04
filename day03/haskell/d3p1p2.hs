@@ -24,12 +24,12 @@ anyContained :: Tree Char -> String -> Char
 anyContained _ [] = error "No element contained"
 anyContained tree (x:xs)
     | contains tree x = x
-    | otherwise = anyContained tree xs
+    | otherwise       = anyContained tree xs
 
 -- Find a contained element in a list of strings in O(n) * O(n * log n) time.
 -- Intersect would do in O(n) * O(n^2) in an unordered string
 duplicated :: (Tree Char, [String]) -> Char
-duplicated (tree, xs) = head (foldr ((:) . anyContained tree) [] xs)
+duplicated (tree, xs) = head $ foldr ((:) . anyContained tree) [] xs
 
 chunk :: Int -> [a] -> [[a]]
 chunk _ [] = []
