@@ -2,37 +2,34 @@ import BTree
 
 priority :: Char -> Int
 priority c
-    | c < 'a' = ascii `mod` 65 + 26 + 1 -- 'A' = 65 ~ 1, offset = 26
-    | otherwise = ascii `mod` 97 + 1 -- 'a' = 97
+    | c < 'a'   = ascii `mod` fromEnum 'A' + 26 + 1 -- 'A' = 65 ~ 1, offset = 26
+    | otherwise = ascii `mod` fromEnum 'a' + 1      -- 'a' = 97
     where
         ascii = fromEnum c
 
-parseRucksack :: String -> (Tree Char, String)
-parseRucksack s = ((toTreeChar nilTree . fst) split, snd split)
+parseRucksack :: String -> (Tree Char, [String])
+parseRucksack s = ((toTree . fst) split, [snd split])
     where
         middle = length s `div` 2
-        split = splitAt middle s
+        split  = splitAt middle s
 
-parseRucksack2 :: [String] -> (Tree Char, [String])
-parseRucksack2 [] = error "Invalid badge"
-parseRucksack2 (x:xs) = (toTreeChar nilTree x, xs)
+parseBadge :: [String] -> (Tree Char, [String])
+parseBadge (x:xs) = (toTree x, xs)
+parseBadge _      = error "Invalid badge"
 
-toTreeChar :: Tree Char -> String -> Tree Char
-toTreeChar = foldl BTree.insert
+toTree :: String -> Tree Char
+toTree = foldl BTree.insert nilTree
 
-duplicated :: (Tree Char, String) -> Char
-duplicated (_, []) = ' '
-duplicated (tree, x:xs)
+anyContained :: Tree Char -> String -> Char
+anyContained _ [] = error "No element contained"
+anyContained tree (x:xs)
     | contains tree x = x
-    | otherwise = duplicated (tree, xs)
+    | otherwise = anyContained tree xs
 
-duplicated2 :: (Tree Char, [String]) -> Char
-duplicated2 (_, []) = error "No duplicated element"
-duplicated2 (tree, x:xs) 
-    | duplicatedChar /= ' ' = duplicatedChar
-    | otherwise = duplicated2 (tree, xs)
-    where
-        duplicatedChar = duplicated (tree, x)
+-- Find a contained element in a list of strings in O(n) * O(n * log n) time.
+-- Intersect would do in O(n) * O(n^2) in an unordered string
+duplicated :: (Tree Char, [String]) -> Char
+duplicated (tree, xs) = head (foldr ((:) . anyContained tree) [] xs)
 
 chunk :: Int -> [a] -> [[a]]
 chunk _ [] = []
@@ -45,9 +42,9 @@ main = do
     input <- readFile "../input"
     
     let rucksacks = lines input
-    let rucksackSum1 = foldr ((+) . priority . duplicated . parseRucksack) 0 rucksacks
-    putStrLn $ "First part: " ++ show rucksackSum1
+    let rucksacksPrioritySum = foldr ((+) . priority . duplicated . parseRucksack) 0 rucksacks
+    putStrLn $ "First part: " ++ show rucksacksPrioritySum
 
-    let rucksacks3 = chunk 3 rucksacks
-    let rucksackSum2 = foldr ((+) . priority . duplicated2 . parseRucksack2) 0 rucksacks3
-    putStrLn $ "Second part: " ++ show rucksackSum2
+    let badges = chunk 3 rucksacks
+    let badgesPrioritySum = foldr ((+) . priority . duplicated . parseBadge) 0 badges
+    putStrLn $ "Second part: " ++ show badgesPrioritySum
