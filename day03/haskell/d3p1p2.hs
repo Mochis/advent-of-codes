@@ -14,8 +14,8 @@ parseRucksack s = ((toTree . fst) split, [snd split])
         split  = splitAt middle s
 
 parseBadge :: [String] -> (Tree Char, [String])
+parseBadge []     = error "Invalid badge"
 parseBadge (x:xs) = (toTree x, xs)
-parseBadge _      = error "Invalid badge"
 
 toTree :: String -> Tree Char
 toTree = foldl BTree.insert nilTree
