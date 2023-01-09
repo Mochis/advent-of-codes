@@ -2,11 +2,11 @@ import Data.List.Split (splitOn)
 
 type Range = (Int, Int)
 
-parseRange :: String -> (Int, Int)
-parseRange = tuplify2 <$> map read . splitOn "-"
+parseRange :: String -> Range
+parseRange = tuplify2 . map read . splitOn "-"
 
 parseRanges :: String -> (Range, Range)
-parseRanges = tuplify2 <$> map parseRange . splitOn ","
+parseRanges = tuplify2 . map parseRange . splitOn ","
 
 tuplify2 :: [a] -> (a, a)
 tuplify2 [x, y] = (x, y)
