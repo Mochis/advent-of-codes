@@ -8,6 +8,7 @@
 !*/
 !*.md
 !*.rs
+!*.toml
 !*.hs
 !*.go
 !*.scala
